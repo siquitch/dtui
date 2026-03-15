@@ -62,7 +62,8 @@ If the user provides a plain name like `add-logging`, infer the appropriate pref
      EOF
      )"
      ```
-6. Return the PR URL.
+6. Enable auto-merge: `gh pr merge --squash --auto`.
+7. Return the PR URL.
 
 ---
 
