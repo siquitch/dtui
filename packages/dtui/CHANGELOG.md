@@ -1,3 +1,9 @@
+## 0.1.1
+
+- Update package metadata for pub.dev publishing (description, repository, topics)
+- Add analysis_options.yaml with recommended lints
+- Rename `TuiApp` to `DTuiApp` for consistency with package name
+
 ## 0.1.0
 
 Initial release of dtui — a zero-dependency terminal UI framework for Dart.
