@@ -39,9 +39,9 @@ void main() async {
     'Centered overlay with border, title, and child widget.',
   ];
 
-  late final TuiApp app;
+  late final DTuiApp app;
 
-  app = TuiApp(
+  app = DTuiApp(
     buildRoot: () {
       // ── Left pane: bordered list with scrollbar ──
       final listView = ListView(

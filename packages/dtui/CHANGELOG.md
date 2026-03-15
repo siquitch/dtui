@@ -17,4 +17,4 @@ Initial release of dtui — a zero-dependency terminal UI framework for Dart.
 - 256-color styling with bold, dim, italic, underline, inverse, and strikethrough
 - Full keyboard input parsing including modifiers, arrow keys, and escape sequences
 - Diff-based ANSI renderer that minimizes terminal output by diffing frame buffers
-- `TuiApp` entry point for wiring the render loop and event handling
+- `DTuiApp` entry point for wiring the render loop and event handling

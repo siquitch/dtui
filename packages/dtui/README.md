@@ -1,6 +1,6 @@
 # dtui
 
-A zero-dependency terminal UI framework for Dart. Build rich, interactive terminal applications with a widget-based architecture and efficient diff-based rendering.
+A zero-dependency terminal UI framework for Dart. 
 
 ## Features
 
@@ -42,9 +42,9 @@ dart pub add dtui
 import 'package:dtui/dtui.dart';
 
 void main() async {
-  late final TuiApp app;
+  late final DTuiApp app;
 
-  app = TuiApp(
+  app = DTuiApp(
     buildRoot: () {
       return Border(
         title: 'Hello',
