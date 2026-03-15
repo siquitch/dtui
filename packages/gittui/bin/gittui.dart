@@ -36,7 +36,7 @@ void main(List<String> arguments) async {
 
   final path = results.rest.isNotEmpty ? results.rest.first : null;
 
-  final app = DartGitApp();
+  final app = GittuiApp();
   try {
     await app.run(path);
   } on Exception catch (e) {
