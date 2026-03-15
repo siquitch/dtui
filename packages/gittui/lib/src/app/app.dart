@@ -23,7 +23,7 @@ import 'views/popup_views/branch_create_popup.dart';
 import 'views/popup_views/commit_message_popup.dart';
 import 'views/popup_views/confirmation_popup.dart';
 
-class DartGitApp {
+class GittuiApp {
   late final GitRepository _repo;
   late final TuiApp _tuiApp;
   late final KeybindingRegistry _keybindingRegistry;
@@ -150,11 +150,13 @@ class DartGitApp {
       quit: () async => _tuiApp.exit(),
       stageSelected: () async {
         await _filesController.toggleStageSelected();
+        _diffContext.reset();
         await _filesController.loadDiffForSelected();
         await _refreshCoordinator.refresh({RefreshScope.status});
       },
       stageAll: () async {
         await _filesController.stageAll();
+        _diffContext.reset();
         await _filesController.loadDiffForSelected();
         await _refreshCoordinator.refresh({RefreshScope.status});
       },
@@ -164,6 +166,7 @@ class DartGitApp {
           'Are you sure you want to discard changes to ${_filesController.selectedFile?.path ?? "this file"}?',
           () async {
             await _filesController.discardSelected();
+            _diffContext.reset();
             await _filesController.loadDiffForSelected();
           },
         );
@@ -285,7 +288,7 @@ class DartGitApp {
     }
   }
 
-  void _handleInput(InputEvent event) {
+  Future<void> _handleInput(InputEvent event) async {
     // If popup is open, delegate to popup
     if (_activePopup != null) {
       _activePopup!.handleEvent(event);
@@ -296,15 +299,14 @@ class DartGitApp {
     // Try keybinding resolution
     final binding = _keybindingRegistry.resolve(event, _currentContextName);
     if (binding != null) {
-      binding.handler().then((_) {
+      try {
+        await binding.handler();
         _tuiApp.requestRender();
-      }).catchError((Object e) {
-        if (e is GitCommandException) {
-          _setError(e.stderr);
-        } else {
-          _setError(e.toString());
-        }
-      });
+      } on GitCommandException catch (e) {
+        _setError(e.stderr);
+      } catch (e) {
+        _setError(e.toString());
+      }
       return;
     }
 
@@ -316,18 +318,20 @@ class DartGitApp {
 
     // Handle list navigation for the active tab
     if (event is KeyEvent) {
-      _handleTabNavigation(event);
+      await _handleTabNavigation(event);
     }
   }
 
-  void _handleTabNavigation(KeyEvent event) {
+  Future<void> _handleTabNavigation(KeyEvent event) async {
     switch (_state.ui.activeTab) {
       case SidebarTab.files:
-        _handleListNav(event, _filesController.selectedIndex,
-            _state.git.files.length, (i) {
-          _filesController.selectedIndex = i;
-          _filesController.loadDiffForSelected();
-        });
+        final newIndex = _calcListNav(
+            event, _filesController.selectedIndex, _state.git.files.length);
+        if (newIndex != null && newIndex != _filesController.selectedIndex) {
+          _filesController.selectedIndex = newIndex;
+          _diffContext.reset();
+          await _filesController.loadDiffForSelected();
+        }
       case SidebarTab.branches:
         _handleListNav(event, _branchesController.selectedIndex,
             _state.git.branches.length, (i) {
@@ -348,30 +352,35 @@ class DartGitApp {
     }
   }
 
-  void _handleListNav(
-      KeyEvent event, int current, int count, void Function(int) setIndex) {
-    if (count == 0) return;
+  /// Returns the new index for a list navigation key, or null if not a nav key.
+  int? _calcListNav(KeyEvent event, int current, int count) {
+    if (count == 0) return null;
     switch (event.key) {
       case keyDown:
       case 'j':
-        setIndex((current + 1).clamp(0, count - 1));
-        _tuiApp.requestRender();
+        return (current + 1).clamp(0, count - 1);
       case keyUp:
       case 'k':
-        setIndex((current - 1).clamp(0, count - 1));
-        _tuiApp.requestRender();
+        return (current - 1).clamp(0, count - 1);
       case 'g':
-        setIndex(0);
-        _tuiApp.requestRender();
+        return 0;
       case 'G':
-        setIndex(count - 1);
-        _tuiApp.requestRender();
+        return count - 1;
       case keyPageDown:
-        setIndex((current + 10).clamp(0, count - 1));
-        _tuiApp.requestRender();
+        return (current + 10).clamp(0, count - 1);
       case keyPageUp:
-        setIndex((current - 10).clamp(0, count - 1));
-        _tuiApp.requestRender();
+        return (current - 10).clamp(0, count - 1);
+      default:
+        return null;
+    }
+  }
+
+  void _handleListNav(
+      KeyEvent event, int current, int count, void Function(int) setIndex) {
+    final newIndex = _calcListNav(event, current, count);
+    if (newIndex != null) {
+      setIndex(newIndex);
+      _tuiApp.requestRender();
     }
   }
 
