@@ -11,7 +11,6 @@ class MainLayout extends Widget {
   final int selectedFileIndex;
   final int selectedBranchIndex;
   final int selectedCommitIndex;
-  final int selectedStashIndex;
   final int diffScrollOffset;
   final int diffSelectedLine;
   final List<CommandLogEntry> commandLog;
@@ -21,7 +20,6 @@ class MainLayout extends Widget {
     this.selectedFileIndex = 0,
     this.selectedBranchIndex = 0,
     this.selectedCommitIndex = 0,
-    this.selectedStashIndex = 0,
     this.diffScrollOffset = 0,
     this.diffSelectedLine = 0,
     this.commandLog = const [],
@@ -38,20 +36,15 @@ class MainLayout extends Widget {
         .clamp(10, area.width - 10);
     final mainWidth = area.width - sidebarWidth - 1; // 1 for divider
 
-    // Sidebar
+    // Sidebar (3 stacked panes, each with its own border)
     final sidebarArea = Rect(area.x, area.y, sidebarWidth, mainHeight);
-    final sidebarBorder = Border(
-      child: Sidebar(
-        appState: appState,
-        selectedFileIndex: selectedFileIndex,
-        selectedBranchIndex: selectedBranchIndex,
-        selectedCommitIndex: selectedCommitIndex,
-        selectedStashIndex: selectedStashIndex,
-      ),
-      title: appState.ui.activeTab.label,
-      focused: true,
+    final sidebar = Sidebar(
+      appState: appState,
+      selectedFileIndex: selectedFileIndex,
+      selectedBranchIndex: selectedBranchIndex,
+      selectedCommitIndex: selectedCommitIndex,
     );
-    sidebarBorder.render(canvas, sidebarArea);
+    sidebar.render(canvas, sidebarArea);
 
     // Divider
     final dividerX = area.x + sidebarWidth;

@@ -138,7 +138,6 @@ class GittuiApp {
       selectedFileIndex: _filesController.selectedIndex,
       selectedBranchIndex: _branchesController.selectedIndex,
       selectedCommitIndex: _commitsController.selectedIndex,
-      selectedStashIndex: _stashController.selectedIndex,
       diffScrollOffset: _diffContext.scrollOffset,
       diffSelectedLine: _diffContext.selectedLine,
       commandLog: _repo.runner.log,
@@ -232,22 +231,22 @@ class GittuiApp {
         await _stashController.popSelected();
         await _refreshCoordinator.refresh({RefreshScope.files, RefreshScope.stash});
       },
-      switchTab: (tab) {
-        _setState(_state.copyWith(ui: _state.ui.copyWith(activeTab: tab)));
+      switchPane: (pane) {
+        _setState(_state.copyWith(ui: _state.ui.copyWith(activePane: pane)));
       },
-      nextTab: () {
-        final tabs = SidebarTab.values;
-        final current = tabs.indexOf(_state.ui.activeTab);
-        final next = (current + 1) % tabs.length;
+      nextPane: () {
+        final panes = SidebarPane.values;
+        final current = panes.indexOf(_state.ui.activePane);
+        final next = (current + 1) % panes.length;
         _setState(_state.copyWith(
-            ui: _state.ui.copyWith(activeTab: tabs[next])));
+            ui: _state.ui.copyWith(activePane: panes[next])));
       },
-      previousTab: () {
-        final tabs = SidebarTab.values;
-        final current = tabs.indexOf(_state.ui.activeTab);
-        final prev = (current - 1 + tabs.length) % tabs.length;
+      previousPane: () {
+        final panes = SidebarPane.values;
+        final current = panes.indexOf(_state.ui.activePane);
+        final prev = (current - 1 + panes.length) % panes.length;
         _setState(_state.copyWith(
-            ui: _state.ui.copyWith(activeTab: tabs[prev])));
+            ui: _state.ui.copyWith(activePane: panes[prev])));
       },
       toggleCommandLog: () {
         _setState(_state.copyWith(
@@ -274,17 +273,13 @@ class GittuiApp {
   }
 
   String get _currentContextName {
-    switch (_state.ui.activeTab) {
-      case SidebarTab.status:
-        return 'status';
-      case SidebarTab.files:
+    switch (_state.ui.activePane) {
+      case SidebarPane.files:
         return 'files';
-      case SidebarTab.branches:
+      case SidebarPane.branches:
         return 'branches';
-      case SidebarTab.commits:
+      case SidebarPane.commits:
         return 'commits';
-      case SidebarTab.stash:
-        return 'stash';
     }
   }
 
@@ -316,15 +311,15 @@ class GittuiApp {
       return;
     }
 
-    // Handle list navigation for the active tab
+    // Handle list navigation for the active pane
     if (event is KeyEvent) {
-      await _handleTabNavigation(event);
+      await _handlePaneNavigation(event);
     }
   }
 
-  Future<void> _handleTabNavigation(KeyEvent event) async {
-    switch (_state.ui.activeTab) {
-      case SidebarTab.files:
+  Future<void> _handlePaneNavigation(KeyEvent event) async {
+    switch (_state.ui.activePane) {
+      case SidebarPane.files:
         final newIndex = _calcListNav(
             event, _filesController.selectedIndex, _state.git.files.length);
         if (newIndex != null && newIndex != _filesController.selectedIndex) {
@@ -332,23 +327,16 @@ class GittuiApp {
           _diffContext.reset();
           await _filesController.loadDiffForSelected();
         }
-      case SidebarTab.branches:
+      case SidebarPane.branches:
         _handleListNav(event, _branchesController.selectedIndex,
             _state.git.branches.length, (i) {
           _branchesController.selectedIndex = i;
         });
-      case SidebarTab.commits:
+      case SidebarPane.commits:
         _handleListNav(event, _commitsController.selectedIndex,
             _state.git.commits.length, (i) {
           _commitsController.selectedIndex = i;
         });
-      case SidebarTab.stash:
-        _handleListNav(event, _stashController.selectedIndex,
-            _state.git.stashes.length, (i) {
-          _stashController.selectedIndex = i;
-        });
-      case SidebarTab.status:
-        break;
     }
   }
 

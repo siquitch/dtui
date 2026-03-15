@@ -19,9 +19,9 @@ class DefaultKeybindings {
     required Future<void> Function() fetch,
     required Future<void> Function() stashChanges,
     required Future<void> Function() popStash,
-    required void Function(SidebarTab) switchTab,
-    required void Function() nextTab,
-    required void Function() previousTab,
+    required void Function(SidebarPane) switchPane,
+    required void Function() nextPane,
+    required void Function() previousPane,
     required void Function() toggleCommandLog,
     required void Function() toggleHelp,
     required void Function() goBack,
@@ -40,13 +40,13 @@ class DefaultKeybindings {
       ),
       Keybinding(
         key: keyTab,
-        description: 'Next tab',
-        handler: () async => nextTab(),
+        description: 'Next pane',
+        handler: () async => nextPane(),
       ),
       Keybinding(
         key: 'shift+$keyTab',
-        description: 'Previous tab',
-        handler: () async => previousTab(),
+        description: 'Previous pane',
+        handler: () async => previousPane(),
       ),
       Keybinding(
         key: keyEscape,
@@ -64,31 +64,33 @@ class DefaultKeybindings {
         handler: () async => toggleHelp(),
       ),
 
-      // Tab shortcuts
+      // Pane navigation
+      Keybinding(
+        key: 'h',
+        description: 'Previous pane',
+        handler: () async => previousPane(),
+      ),
+      Keybinding(
+        key: 'l',
+        description: 'Next pane',
+        handler: () async => nextPane(),
+      ),
+
+      // Pane shortcuts
       Keybinding(
         key: '1',
-        description: 'Status tab',
-        handler: () async => switchTab(SidebarTab.status),
+        description: 'Files pane',
+        handler: () async => switchPane(SidebarPane.files),
       ),
       Keybinding(
         key: '2',
-        description: 'Files tab',
-        handler: () async => switchTab(SidebarTab.files),
+        description: 'Branches pane',
+        handler: () async => switchPane(SidebarPane.branches),
       ),
       Keybinding(
         key: '3',
-        description: 'Branches tab',
-        handler: () async => switchTab(SidebarTab.branches),
-      ),
-      Keybinding(
-        key: '4',
-        description: 'Commits tab',
-        handler: () async => switchTab(SidebarTab.commits),
-      ),
-      Keybinding(
-        key: '5',
-        description: 'Stash tab',
-        handler: () async => switchTab(SidebarTab.stash),
+        description: 'Commits pane',
+        handler: () async => switchPane(SidebarPane.commits),
       ),
 
       // File operations
@@ -166,12 +168,6 @@ class DefaultKeybindings {
         key: 's',
         description: 'Stash',
         handler: stashChanges,
-      ),
-      Keybinding(
-        key: keySpace,
-        description: 'Pop stash',
-        context: 'stash',
-        handler: popStash,
       ),
     ];
   }

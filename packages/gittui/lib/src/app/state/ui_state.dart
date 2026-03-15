@@ -1,43 +1,33 @@
-enum SidebarTab {
-  status,
+enum SidebarPane {
   files,
   branches,
-  commits,
-  stash;
+  commits;
 
   String get label {
     switch (this) {
-      case SidebarTab.status:
-        return 'Status';
-      case SidebarTab.files:
+      case SidebarPane.files:
         return 'Files';
-      case SidebarTab.branches:
+      case SidebarPane.branches:
         return 'Branches';
-      case SidebarTab.commits:
+      case SidebarPane.commits:
         return 'Commits';
-      case SidebarTab.stash:
-        return 'Stash';
     }
   }
 
   String get shortcut {
     switch (this) {
-      case SidebarTab.status:
+      case SidebarPane.files:
         return '1';
-      case SidebarTab.files:
+      case SidebarPane.branches:
         return '2';
-      case SidebarTab.branches:
+      case SidebarPane.commits:
         return '3';
-      case SidebarTab.commits:
-        return '4';
-      case SidebarTab.stash:
-        return '5';
     }
   }
 }
 
 class UiState {
-  final SidebarTab activeTab;
+  final SidebarPane activePane;
   final bool showCommandLog;
   final bool showHelp;
   final String? searchQuery;
@@ -48,7 +38,7 @@ class UiState {
   final String? errorMessage;
 
   const UiState({
-    this.activeTab = SidebarTab.files,
+    this.activePane = SidebarPane.files,
     this.showCommandLog = false,
     this.showHelp = false,
     this.searchQuery,
@@ -60,7 +50,7 @@ class UiState {
   });
 
   UiState copyWith({
-    SidebarTab? activeTab,
+    SidebarPane? activePane,
     bool? showCommandLog,
     bool? showHelp,
     String? searchQuery,
@@ -75,7 +65,7 @@ class UiState {
     bool clearError = false,
   }) {
     return UiState(
-      activeTab: activeTab ?? this.activeTab,
+      activePane: activePane ?? this.activePane,
       showCommandLog: showCommandLog ?? this.showCommandLog,
       showHelp: showHelp ?? this.showHelp,
       searchQuery: clearSearch ? null : (searchQuery ?? this.searchQuery),
