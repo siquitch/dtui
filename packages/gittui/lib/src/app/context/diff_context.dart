@@ -8,6 +8,11 @@ class DiffViewContext extends Context {
   int scrollOffset = 0;
   int selectedLine = 0;
 
+  void reset() {
+    scrollOffset = 0;
+    selectedLine = 0;
+  }
+
   @override
   String get name => 'diff';
 

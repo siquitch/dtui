@@ -12,7 +12,7 @@ import 'widgets/widget.dart';
 /// The main TUI application runner.
 class TuiApp {
   final Widget Function() buildRoot;
-  final void Function(InputEvent)? onEvent;
+  final FutureOr<void> Function(InputEvent)? onEvent;
   final Terminal terminal;
   final DiffRenderer _renderer = DiffRenderer();
 
@@ -61,7 +61,7 @@ class TuiApp {
 
           // Dispatch to event handler or root widget
           if (onEvent != null) {
-            onEvent!(event);
+            await onEvent!(event);
           } else {
             final root = buildRoot();
             root.handleEvent(event);
