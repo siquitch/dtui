@@ -1,0 +1,9 @@
+name: dtui_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.12.0-113.2.beta
+
+workspace:
+  - packages/gittui
+  - packages/dtui
