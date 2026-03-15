@@ -2,7 +2,7 @@ name: dtui
 description: >-
   A zero-dependency terminal UI framework for Dart with composable widgets,
   flex/fixed layout engine, and efficient diff-based ANSI rendering.
-version: 0.1.1
+version: 0.1.2
 repository: https://github.com/siquitch/dtui
 homepage: https://github.com/siquitch/dtui
 topics: [tui, terminal, cli, widgets]
