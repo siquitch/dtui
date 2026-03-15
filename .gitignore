@@ -3,3 +3,5 @@
 .dart_tool/
 
 build/
+
+./packages/gittui/bin/gittui
