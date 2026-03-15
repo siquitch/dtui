@@ -10,7 +10,7 @@ import 'terminal/terminal.dart';
 import 'widgets/widget.dart';
 
 /// The main TUI application runner.
-class TuiApp {
+class DTuiApp {
   final Widget Function() buildRoot;
   final FutureOr<void> Function(InputEvent)? onEvent;
   final Terminal terminal;
@@ -23,8 +23,8 @@ class TuiApp {
   StreamSubscription<InputEvent>? _inputSub;
   StreamSubscription<ProcessSignal>? _sigwinchSub;
 
-  TuiApp({required this.buildRoot, this.onEvent, Terminal? terminal})
-    : terminal = terminal ?? Terminal();
+  DTuiApp({required this.buildRoot, this.onEvent, Terminal? terminal})
+      : terminal = terminal ?? Terminal();
 
   /// Request a re-render on the next cycle.
   void requestRender() {

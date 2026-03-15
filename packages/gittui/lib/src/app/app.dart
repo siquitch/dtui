@@ -25,7 +25,7 @@ import 'views/popup_views/confirmation_popup.dart';
 
 class GittuiApp {
   late final GitRepository _repo;
-  late final TuiApp _tuiApp;
+  late final DTuiApp _tuiApp;
   late final KeybindingRegistry _keybindingRegistry;
   late final ContextStack _contextStack;
   late final RefreshCoordinator _refreshCoordinator;
@@ -108,7 +108,7 @@ class GittuiApp {
 
     _setupKeybindings();
 
-    _tuiApp = TuiApp(buildRoot: _buildRoot, onEvent: _handleInput);
+    _tuiApp = DTuiApp(buildRoot: _buildRoot, onEvent: _handleInput);
 
     // Initial data load
     await _refreshCoordinator.refreshAll();
