@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Rename `example/demo.dart` to `example/example.dart` for correct pub.dev scoring
+
 ## 0.1.1
 
 - Update package metadata for pub.dev publishing (description, repository, topics)
