@@ -62,4 +62,4 @@ void main() async {
 }
 ```
 
-See [`example/demo.dart`](example/demo.dart) for a full demo showcasing every widget.
+See [`example/example.dart`](example/example.dart) for a full demo showcasing every widget.
