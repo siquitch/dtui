@@ -45,7 +45,9 @@ class Sidebar extends Widget {
       title: 'Files',
       focused: appState.ui.activePane == SidebarPane.files,
       focusedBorderStyle: focusedStyle,
-      titleStyle: appState.ui.activePane == SidebarPane.files ? focusedStyle : Style.none,
+      titleStyle: appState.ui.activePane == SidebarPane.files
+          ? focusedStyle
+          : Style.none,
     );
     filesBorder.render(canvas, filesArea);
     y += filesHeight;
@@ -60,7 +62,9 @@ class Sidebar extends Widget {
       title: 'Branches',
       focused: appState.ui.activePane == SidebarPane.branches,
       focusedBorderStyle: focusedStyle,
-      titleStyle: appState.ui.activePane == SidebarPane.branches ? focusedStyle : Style.none,
+      titleStyle: appState.ui.activePane == SidebarPane.branches
+          ? focusedStyle
+          : Style.none,
     );
     branchesBorder.render(canvas, branchesArea);
     y += branchesHeight;
@@ -75,7 +79,9 @@ class Sidebar extends Widget {
       title: 'Commits',
       focused: appState.ui.activePane == SidebarPane.commits,
       focusedBorderStyle: focusedStyle,
-      titleStyle: appState.ui.activePane == SidebarPane.commits ? focusedStyle : Style.none,
+      titleStyle: appState.ui.activePane == SidebarPane.commits
+          ? focusedStyle
+          : Style.none,
     );
     commitsBorder.render(canvas, commitsArea);
   }
@@ -97,17 +103,51 @@ class _FilesList extends Widget {
 
   @override
   void render(Canvas canvas, Rect area) {
-    _renderList(
-      canvas,
-      area,
-      files,
-      selectedIndex,
-      (GitFile f) => '${f.statusDisplay} ${f.path}',
-      (GitFile f) => _fileStyle(f),
-    );
+    if (files.isEmpty) {
+      canvas.drawText(area.x, area.y, '  (empty)', const Style(dim: true));
+      return;
+    }
+
+    var scrollOffset = 0;
+    if (selectedIndex >= area.height) {
+      scrollOffset = selectedIndex - area.height + 1;
+    }
+
+    for (var i = 0; i < area.height; i++) {
+      final itemIndex = scrollOffset + i;
+      if (itemIndex >= files.length) break;
+
+      final file = files[itemIndex];
+      final isSelected = itemIndex == selectedIndex;
+      final selectStyle = isSelected ? const Style(inverse: true) : Style.none;
+      final statusStyle = _statusStyle(file).merge(selectStyle);
+      final statusText = file.statusDisplay;
+      final pathText = ' ${file.path}';
+
+      // Clear line
+      for (var x = area.x; x < area.right; x++) {
+        canvas.drawChar(x, area.y + i, ' ', selectStyle);
+      }
+
+      // Draw status code with color
+      for (var j = 0; j < statusText.length && j < area.width; j++) {
+        canvas.drawChar(area.x + j, area.y + i, statusText[j], statusStyle);
+      }
+
+      // Draw path without color (just selection highlight)
+      final pathStart = statusText.length;
+      for (var j = 0; j < pathText.length && pathStart + j < area.width; j++) {
+        canvas.drawChar(
+          area.x + pathStart + j,
+          area.y + i,
+          pathText[j],
+          selectStyle,
+        );
+      }
+    }
   }
 
-  Style _fileStyle(GitFile file) {
+  Style _statusStyle(GitFile file) {
     switch (file.worktreeStatus) {
       case FileStatus.modified:
         return const Style(foreground: Color.yellow);

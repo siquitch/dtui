@@ -1,5 +1,5 @@
 name: gittui
-description: A lazygit clone built in Dart.
+description: Terminal git ui. Inspired by lazygit.
 version: 0.0.1
 publish_to: none
 
@@ -13,6 +13,7 @@ dependencies:
   path: ^1.9.0
   yaml: ^3.1.0
   equatable: ^2.0.0
+  collection:
   dtui:
     path: ../dtui
 

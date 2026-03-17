@@ -64,8 +64,7 @@ class TextInput extends Widget {
     for (var i = 0; i < availableWidth; i++) {
       final charIndex = textStart + i;
       if (charIndex < _text.length) {
-        final style =
-            charIndex == _cursorPosition ? cursorStyle : textStyle;
+        final style = charIndex == _cursorPosition ? cursorStyle : textStyle;
         canvas.drawChar(x + i, y, _text[charIndex], style);
       } else if (charIndex == _cursorPosition) {
         // Cursor at end of text

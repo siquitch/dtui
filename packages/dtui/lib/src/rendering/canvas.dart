@@ -90,8 +90,7 @@ class Canvas {
   }
 
   /// Draw a horizontal line starting at (x, y).
-  void drawHorizontalLine(
-      int x, int y, int length, String char, Style style) {
+  void drawHorizontalLine(int x, int y, int length, String char, Style style) {
     if (y < clip.top || y >= clip.bottom) return;
     for (var i = 0; i < length; i++) {
       final cx = x + i;
@@ -102,8 +101,7 @@ class Canvas {
   }
 
   /// Draw a vertical line starting at (x, y).
-  void drawVerticalLine(
-      int x, int y, int length, String char, Style style) {
+  void drawVerticalLine(int x, int y, int length, String char, Style style) {
     if (x < clip.left || x >= clip.right) return;
     for (var i = 0; i < length; i++) {
       final cy = y + i;
@@ -132,8 +130,8 @@ class Canvas {
     // Left and right edges
     drawVerticalLine(
         rect.left, rect.top + 1, rect.height - 2, chars.vertical, style);
-    drawVerticalLine(rect.right - 1, rect.top + 1, rect.height - 2,
-        chars.vertical, style);
+    drawVerticalLine(
+        rect.right - 1, rect.top + 1, rect.height - 2, chars.vertical, style);
   }
 
   /// Create a sub-canvas with a further-clipped rectangle.

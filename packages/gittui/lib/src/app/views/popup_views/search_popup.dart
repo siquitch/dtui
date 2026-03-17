@@ -6,7 +6,7 @@ class SearchPopup extends Widget {
   final TextInput _textInput;
 
   SearchPopup({this.onSearch, this.onCancel})
-      : _textInput = TextInput(prompt: '/');
+    : _textInput = TextInput(prompt: '/');
 
   @override
   void render(Canvas canvas, Rect area) {

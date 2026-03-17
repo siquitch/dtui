@@ -42,10 +42,11 @@ If the user provides a plain name like `add-logging`, infer the appropriate pref
 ## Sub-command: `pr`
 
 1. Check that the current branch is NOT `main`. Refuse to PR from main.
-2. Run `dart analyze` to catch lint issues before pushing.
-3. Run `dart test -r expanded packages/gittui/` to ensure tests pass.
-4. Push the branch to origin: `git push -u origin HEAD`.
-5. Open a pull request against `main` using `gh pr create`.
+2. Run `dart format .` to format all Dart files.
+3. Run `dart analyze` to catch lint issues before pushing.
+4. Run `dart test -r expanded packages/gittui/` to ensure tests pass.
+5. Push the branch to origin: `git push -u origin HEAD`.
+6. Open a pull request against `main` using `gh pr create`.
    - Derive the title from the branch name or commit history.
    - Generate a summary body from the commits on the branch.
    - Use this format:
@@ -62,8 +63,8 @@ If the user provides a plain name like `add-logging`, infer the appropriate pref
      EOF
      )"
      ```
-6. Enable auto-merge: `gh pr merge --squash --auto`.
-7. Return the PR URL.
+7. Enable auto-merge: `gh pr merge --squash --auto`.
+8. Return the PR URL.
 
 ---
 

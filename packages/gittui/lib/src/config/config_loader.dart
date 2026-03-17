@@ -7,7 +7,8 @@ import 'config.dart';
 
 class ConfigLoader {
   static String get _configDir {
-    final home = Platform.environment['HOME'] ??
+    final home =
+        Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '.';
     return p.join(home, '.config', 'gittui');
@@ -31,8 +32,9 @@ class ConfigLoader {
         sidebarWidth: yaml['sidebar_width'] as int? ?? 40,
         defaultBranch: yaml['default_branch'] as String?,
         customKeybindings: yaml['keybindings'] is Map
-            ? (yaml['keybindings'] as Map)
-                .map((k, v) => MapEntry(k.toString(), v.toString()))
+            ? (yaml['keybindings'] as Map).map(
+                (k, v) => MapEntry(k.toString(), v.toString()),
+              )
             : const {},
       );
     } on Exception {

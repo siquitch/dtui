@@ -14,7 +14,8 @@ class LogCommands {
     // Format: hash, short hash, subject, body, author name, author email,
     //         author date (ISO), parent hashes, decorations
     const separator = '%x00';
-    const format = '%H$separator%h$separator%s$separator%b$separator'
+    const format =
+        '%H$separator%h$separator%s$separator%b$separator'
         '%an$separator%ae$separator%aI$separator%P$separator%D';
 
     final args = [
@@ -84,18 +85,20 @@ class LogCommands {
         }
       }
 
-      commits.add(GitCommit(
-        hash: hash,
-        shortHash: shortHash,
-        subject: subject,
-        body: body,
-        authorName: authorName,
-        authorEmail: authorEmail,
-        authorDate: authorDate,
-        parentHashes: parentHashes,
-        tags: tags,
-        refs: refs,
-      ));
+      commits.add(
+        GitCommit(
+          hash: hash,
+          shortHash: shortHash,
+          subject: subject,
+          body: body,
+          authorName: authorName,
+          authorEmail: authorEmail,
+          authorDate: authorDate,
+          parentHashes: parentHashes,
+          tags: tags,
+          refs: refs,
+        ),
+      );
     }
 
     return commits;
@@ -146,13 +149,15 @@ class LogCommands {
         message = '';
       }
 
-      entries.add(GitLogEntry(
-        hash: hash,
-        shortHash: shortHash,
-        action: action,
-        message: message,
-        date: date,
-      ));
+      entries.add(
+        GitLogEntry(
+          hash: hash,
+          shortHash: shortHash,
+          action: action,
+          message: message,
+          date: date,
+        ),
+      );
     }
 
     return entries;
@@ -171,7 +176,8 @@ class LogCommands {
   /// Get full details for a single commit.
   Future<GitCommit> getCommit(String hash) async {
     const separator = '%x00';
-    const format = '%H$separator%h$separator%s$separator%b$separator'
+    const format =
+        '%H$separator%h$separator%s$separator%b$separator'
         '%an$separator%ae$separator%aI$separator%P$separator%D';
 
     final result = await _runner.run('log', [

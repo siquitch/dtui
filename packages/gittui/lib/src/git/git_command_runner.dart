@@ -92,13 +92,15 @@ class GitCommandRunner {
     final stdout = (result.stdout as String).trimRight();
     final stderr = (result.stderr as String).trimRight();
 
-    log.add(CommandLogEntry(
-      command: cmdString,
-      timestamp: DateTime.now(),
-      duration: duration,
-      exitCode: result.exitCode,
-      success: result.exitCode == 0,
-    ));
+    log.add(
+      CommandLogEntry(
+        command: cmdString,
+        timestamp: DateTime.now(),
+        duration: duration,
+        exitCode: result.exitCode,
+        success: result.exitCode == 0,
+      ),
+    );
 
     final commandResult = CommandResult(
       exitCode: result.exitCode,
@@ -151,13 +153,15 @@ class GitCommandRunner {
     stopwatch.stop();
     final duration = stopwatch.elapsed;
 
-    log.add(CommandLogEntry(
-      command: cmdString,
-      timestamp: DateTime.now(),
-      duration: duration,
-      exitCode: exitCode,
-      success: exitCode == 0,
-    ));
+    log.add(
+      CommandLogEntry(
+        command: cmdString,
+        timestamp: DateTime.now(),
+        duration: duration,
+        exitCode: exitCode,
+        success: exitCode == 0,
+      ),
+    );
 
     final commandResult = CommandResult(
       exitCode: exitCode,
@@ -199,13 +203,15 @@ class GitCommandRunner {
     final stdout = (result.stdout as String).trimRight();
     final stderr = (result.stderr as String).trimRight();
 
-    log.add(CommandLogEntry(
-      command: cmdString,
-      timestamp: DateTime.now(),
-      duration: duration,
-      exitCode: result.exitCode,
-      success: result.exitCode == 0,
-    ));
+    log.add(
+      CommandLogEntry(
+        command: cmdString,
+        timestamp: DateTime.now(),
+        duration: duration,
+        exitCode: result.exitCode,
+        success: result.exitCode == 0,
+      ),
+    );
 
     return CommandResult(
       exitCode: result.exitCode,

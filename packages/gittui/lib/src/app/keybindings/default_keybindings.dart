@@ -147,12 +147,12 @@ class DefaultKeybindings {
 
       // Remote
       Keybinding(
-        key: 'p',
+        key: 'P',
         description: 'Push',
         handler: push,
       ),
       Keybinding(
-        key: 'P',
+        key: 'p',
         description: 'Pull',
         handler: pull,
       ),

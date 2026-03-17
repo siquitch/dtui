@@ -13,7 +13,9 @@ class BranchesController extends Controller {
   List<GitBranch> get branches => state.git.branches;
 
   GitBranch? get selectedBranch {
-    if (branches.isEmpty || selectedIndex < 0 || selectedIndex >= branches.length) {
+    if (branches.isEmpty ||
+        selectedIndex < 0 ||
+        selectedIndex >= branches.length) {
       return null;
     }
     return branches[selectedIndex];
@@ -23,7 +25,9 @@ class BranchesController extends Controller {
     try {
       final branches = await repo.branches.getBranches();
       final current = await repo.status.getCurrentBranch();
-      updateGitState((g) => g.copyWith(branches: branches, currentBranch: current));
+      updateGitState(
+        (g) => g.copyWith(branches: branches, currentBranch: current),
+      );
       if (selectedIndex >= branches.length && branches.isNotEmpty) {
         selectedIndex = branches.length - 1;
       }

@@ -22,6 +22,8 @@ import 'views/main_layout.dart';
 import 'views/popup_views/branch_create_popup.dart';
 import 'views/popup_views/commit_message_popup.dart';
 import 'views/popup_views/confirmation_popup.dart';
+import 'views/popup_views/error_popup.dart';
+import 'views/popup_views/help_popup.dart';
 
 class GittuiApp {
   late final GitRepository _repo;
@@ -180,8 +182,24 @@ class GittuiApp {
         _showBranchCreatePopup();
       },
       checkoutBranch: () async {
-        await _branchesController.checkoutSelected();
-        await _refreshCoordinator.refreshAll();
+        final branch = _branchesController.selectedBranch;
+        if (branch == null) return;
+        if (branch.isHead) {
+          _showErrorPopup(
+            'Checkout Failed',
+            'Branch "${branch.name}" is already checked out.',
+          );
+          return;
+        }
+        try {
+          await _branchesController.checkoutSelected();
+          await _refreshCoordinator.refreshAll();
+        } on GitCommandException {
+          _showErrorPopup(
+            'Checkout Failed',
+            'Commit or stash your changes before switching branches.',
+          );
+        }
       },
       deleteBranch: () async {
         final branch = _branchesController.selectedBranch;
@@ -225,11 +243,17 @@ class GittuiApp {
       },
       stashChanges: () async {
         await _stashController.stashChanges();
-        await _refreshCoordinator.refresh({RefreshScope.files, RefreshScope.stash});
+        await _refreshCoordinator.refresh({
+          RefreshScope.files,
+          RefreshScope.stash,
+        });
       },
       popStash: () async {
         await _stashController.popSelected();
-        await _refreshCoordinator.refresh({RefreshScope.files, RefreshScope.stash});
+        await _refreshCoordinator.refresh({
+          RefreshScope.files,
+          RefreshScope.stash,
+        });
       },
       switchPane: (pane) {
         _setState(_state.copyWith(ui: _state.ui.copyWith(activePane: pane)));
@@ -238,30 +262,36 @@ class GittuiApp {
         final panes = SidebarPane.values;
         final current = panes.indexOf(_state.ui.activePane);
         final next = (current + 1) % panes.length;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(activePane: panes[next])));
+        _setState(
+          _state.copyWith(ui: _state.ui.copyWith(activePane: panes[next])),
+        );
       },
       previousPane: () {
         final panes = SidebarPane.values;
         final current = panes.indexOf(_state.ui.activePane);
         final prev = (current - 1 + panes.length) % panes.length;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(activePane: panes[prev])));
+        _setState(
+          _state.copyWith(ui: _state.ui.copyWith(activePane: panes[prev])),
+        );
       },
       toggleCommandLog: () {
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(
-                showCommandLog: !_state.ui.showCommandLog)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(showCommandLog: !_state.ui.showCommandLog),
+          ),
+        );
       },
       toggleHelp: () {
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(showHelp: !_state.ui.showHelp)));
+        _showHelpPopup();
       },
       goBack: () {
         if (_activePopup != null) {
           _activePopup = null;
-          _setState(_state.copyWith(
-              ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+          _setState(
+            _state.copyWith(
+              ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+            ),
+          );
         } else if (_contextStack.isNotEmpty) {
           _contextStack.pop();
           _tuiApp.requestRender();
@@ -321,22 +351,33 @@ class GittuiApp {
     switch (_state.ui.activePane) {
       case SidebarPane.files:
         final newIndex = _calcListNav(
-            event, _filesController.selectedIndex, _state.git.files.length);
+          event,
+          _filesController.selectedIndex,
+          _state.git.files.length,
+        );
         if (newIndex != null && newIndex != _filesController.selectedIndex) {
           _filesController.selectedIndex = newIndex;
           _diffContext.reset();
           await _filesController.loadDiffForSelected();
         }
       case SidebarPane.branches:
-        _handleListNav(event, _branchesController.selectedIndex,
-            _state.git.branches.length, (i) {
-          _branchesController.selectedIndex = i;
-        });
+        _handleListNav(
+          event,
+          _branchesController.selectedIndex,
+          _state.git.branches.length,
+          (i) {
+            _branchesController.selectedIndex = i;
+          },
+        );
       case SidebarPane.commits:
-        _handleListNav(event, _commitsController.selectedIndex,
-            _state.git.commits.length, (i) {
-          _commitsController.selectedIndex = i;
-        });
+        _handleListNav(
+          event,
+          _commitsController.selectedIndex,
+          _state.git.commits.length,
+          (i) {
+            _commitsController.selectedIndex = i;
+          },
+        );
     }
   }
 
@@ -364,7 +405,11 @@ class GittuiApp {
   }
 
   void _handleListNav(
-      KeyEvent event, int current, int count, void Function(int) setIndex) {
+    KeyEvent event,
+    int current,
+    int count,
+    void Function(int) setIndex,
+  ) {
     final newIndex = _calcListNav(event, current, count);
     if (newIndex != null) {
       setIndex(newIndex);
@@ -377,16 +422,22 @@ class GittuiApp {
       amend: amend,
       onCommit: (message) async {
         _activePopup = null;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
         try {
           if (amend) {
             await _commitsController.amendCommit(message: message);
           } else {
             await _commitsController.commit(message);
           }
-          await _refreshCoordinator.refresh(
-              {RefreshScope.files, RefreshScope.commits, RefreshScope.status});
+          await _refreshCoordinator.refresh({
+            RefreshScope.files,
+            RefreshScope.commits,
+            RefreshScope.status,
+          });
           _setStatus(amend ? 'Commit amended' : 'Committed');
         } on GitCommandException catch (e) {
           _setError('Commit failed: ${e.stderr}');
@@ -394,20 +445,29 @@ class GittuiApp {
       },
       onCancel: () {
         _activePopup = null;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
       },
     );
-    _setState(_state.copyWith(
-        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'commit')));
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'commit'),
+      ),
+    );
   }
 
   void _showBranchCreatePopup() {
     _activePopup = BranchCreatePopup(
       onCreate: (name) async {
         _activePopup = null;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
         try {
           await _branchesController.createBranch(name);
           _setStatus('Branch "$name" created');
@@ -417,23 +477,54 @@ class GittuiApp {
       },
       onCancel: () {
         _activePopup = null;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
       },
     );
-    _setState(_state.copyWith(
-        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'branch_create')));
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'branch_create'),
+      ),
+    );
+  }
+
+  void _showHelpPopup() {
+    _activePopup = HelpPopup(
+      bindings: _keybindingRegistry.allBindings,
+      onClose: () {
+        _activePopup = null;
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
+      },
+    );
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'help'),
+      ),
+    );
   }
 
   void _showConfirmation(
-      String title, String message, Future<void> Function() onConfirm) {
+    String title,
+    String message,
+    Future<void> Function() onConfirm,
+  ) {
     _activePopup = ConfirmationPopup(
       title: title,
       message: message,
       onConfirm: () async {
         _activePopup = null;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
         try {
           await onConfirm();
         } on GitCommandException catch (e) {
@@ -442,22 +533,54 @@ class GittuiApp {
       },
       onCancel: () {
         _activePopup = null;
-        _setState(_state.copyWith(
-            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true)));
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
       },
     );
-    _setState(_state.copyWith(
-        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'confirmation')));
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'confirmation'),
+      ),
+    );
+  }
+
+  void _showErrorPopup(String title, String message) {
+    _activePopup = ErrorPopup(
+      title: title,
+      message: message,
+      onClose: () {
+        _activePopup = null;
+        _setState(
+          _state.copyWith(
+            ui: _state.ui.copyWith(isPopupOpen: false, clearPopup: true),
+          ),
+        );
+      },
+    );
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(isPopupOpen: true, popupId: 'error'),
+      ),
+    );
   }
 
   void _setStatus(String message) {
-    _setState(_state.copyWith(
-        ui: _state.ui.copyWith(statusMessage: message, clearError: true)));
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(statusMessage: message, clearError: true),
+      ),
+    );
   }
 
   void _setError(String message) {
-    _setState(_state.copyWith(
-        ui: _state.ui.copyWith(errorMessage: message, clearStatus: true)));
+    _setState(
+      _state.copyWith(
+        ui: _state.ui.copyWith(errorMessage: message, clearStatus: true),
+      ),
+    );
   }
 }
 

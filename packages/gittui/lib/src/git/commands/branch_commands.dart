@@ -12,17 +12,19 @@ class BranchCommands {
     // Use a custom format to get all the data we need.
     // Fields: refname:short, objectname:short, subject, HEAD, upstream:short,
     // upstream:track
-    const format = '%(HEAD)%00%(refname:short)%00%(objectname:short)%00'
+    const format =
+        '%(HEAD)%00%(refname:short)%00%(objectname:short)%00'
         '%(subject)%00%(upstream:short)%00%(upstream:track)%00%(refname)';
 
     final result = await _runner.run('branch', [
       '-a',
+      '--sort=-committerdate',
       '--format=$format',
     ]);
 
     if (result.stdout.isEmpty) return [];
 
-    final branches = <GitBranch>[];
+    final branches = <GitBranch>{};
 
     for (final line in result.stdout.split('\n')) {
       if (line.trim().isEmpty) continue;
@@ -59,20 +61,39 @@ class BranchCommands {
         if (behindMatch != null) behind = int.parse(behindMatch.group(1)!);
       }
 
-      branches.add(GitBranch(
-        name: name,
-        remoteName: remoteName,
-        upstream: upstream.isEmpty ? null : upstream,
-        commitHash: commitHash.isEmpty ? null : commitHash,
-        commitSubject: commitSubject.isEmpty ? null : commitSubject,
-        isHead: isHead,
-        isRemote: isRemote,
-        ahead: ahead,
-        behind: behind,
-      ));
+      branches.add(
+        GitBranch(
+          name: name,
+          remoteName: remoteName,
+          upstream: upstream.isEmpty ? null : upstream,
+          commitHash: commitHash.isEmpty ? null : commitHash,
+          commitSubject: commitSubject.isEmpty ? null : commitSubject,
+          isHead: isHead,
+          isRemote: isRemote,
+          ahead: ahead,
+          behind: behind,
+        ),
+      );
     }
 
-    return branches;
+    // Collect local branch names so we can filter out their remote duplicates.
+    final localNames = <String>{
+      for (final b in branches)
+        if (!b.isRemote) b.name,
+    };
+
+    final branchList = branches
+        .where((b) => !b.isRemote || !localNames.contains(b.displayName))
+        .toList();
+
+    // Ensure the checked-out branch is always first.
+    branchList.sort((a, b) {
+      if (a.isHead) return -1;
+      if (b.isHead) return 1;
+      return 0; // Preserve committerdate order from git.
+    });
+
+    return branchList;
   }
 
   /// Create a new branch.

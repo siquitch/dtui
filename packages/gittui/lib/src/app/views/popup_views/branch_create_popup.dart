@@ -6,7 +6,7 @@ class BranchCreatePopup extends Widget {
   final TextInput _textInput;
 
   BranchCreatePopup({this.onCreate, this.onCancel})
-      : _textInput = TextInput(prompt: 'Branch name: ') {
+    : _textInput = TextInput(prompt: 'Branch name: ') {
     _textInput.onSubmit = (text) {
       if (text.trim().isNotEmpty) {
         onCreate?.call(text.trim());

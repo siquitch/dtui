@@ -53,7 +53,8 @@ class DiffHunk {
   });
 
   @override
-  String toString() => 'DiffHunk(@@ -$oldStart,$oldCount +$newStart,$newCount @@)';
+  String toString() =>
+      'DiffHunk(@@ -$oldStart,$oldCount +$newStart,$newCount @@)';
 }
 
 /// Represents a parsed unified diff for a single file.
@@ -110,7 +111,9 @@ class GitDiff {
 
       // Parse the "diff --git a/foo b/bar" line
       final diffLine = lines[i];
-      final diffMatch = RegExp(r'^diff --git a/(.*) b/(.*)$').firstMatch(diffLine);
+      final diffMatch = RegExp(
+        r'^diff --git a/(.*) b/(.*)$',
+      ).firstMatch(diffLine);
       if (diffMatch != null) {
         oldFile = diffMatch.group(1);
         newFile = diffMatch.group(2);
@@ -168,15 +171,17 @@ class GitDiff {
         }
       }
 
-      diffs.add(GitDiff(
-        oldFile: oldFile,
-        newFile: newFile,
-        isBinary: isBinary,
-        isNew: isNew,
-        isDeleted: isDeleted,
-        isRenamed: isRenamed,
-        hunks: hunks,
-      ));
+      diffs.add(
+        GitDiff(
+          oldFile: oldFile,
+          newFile: newFile,
+          isBinary: isBinary,
+          isNew: isNew,
+          isDeleted: isDeleted,
+          isRenamed: isRenamed,
+          hunks: hunks,
+        ),
+      );
     }
 
     return diffs;
@@ -184,8 +189,9 @@ class GitDiff {
 
   static _HunkParseResult? _parseHunk(List<String> lines, int startIndex) {
     final headerLine = lines[startIndex];
-    final match = RegExp(r'^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@(.*)$')
-        .firstMatch(headerLine);
+    final match = RegExp(
+      r'^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@(.*)$',
+    ).firstMatch(headerLine);
     if (match == null) return null;
 
     final oldStart = int.parse(match.group(1)!);
@@ -193,7 +199,8 @@ class GitDiff {
     final newStart = int.parse(match.group(3)!);
     final newCount = int.tryParse(match.group(4) ?? '1') ?? 1;
     final headerSuffix = match.group(5) ?? '';
-    final header = '@@ -$oldStart,$oldCount +$newStart,$newCount @@$headerSuffix';
+    final header =
+        '@@ -$oldStart,$oldCount +$newStart,$newCount @@$headerSuffix';
 
     final diffLines = <DiffLine>[];
     var oldLine = oldStart;
@@ -209,34 +216,42 @@ class GitDiff {
       }
 
       if (line.startsWith('+')) {
-        diffLines.add(DiffLine(
-          type: DiffLineType.added,
-          content: line.substring(1),
-          newLineNumber: newLine,
-        ));
+        diffLines.add(
+          DiffLine(
+            type: DiffLineType.added,
+            content: line.substring(1),
+            newLineNumber: newLine,
+          ),
+        );
         newLine++;
       } else if (line.startsWith('-')) {
-        diffLines.add(DiffLine(
-          type: DiffLineType.removed,
-          content: line.substring(1),
-          oldLineNumber: oldLine,
-        ));
+        diffLines.add(
+          DiffLine(
+            type: DiffLineType.removed,
+            content: line.substring(1),
+            oldLineNumber: oldLine,
+          ),
+        );
         oldLine++;
       } else if (line.startsWith(r'\ No newline at end of file') ||
           line.startsWith(r'\')) {
-        diffLines.add(DiffLine(
-          type: DiffLineType.noNewline,
-          content: line,
-        ));
+        diffLines.add(
+          DiffLine(
+            type: DiffLineType.noNewline,
+            content: line,
+          ),
+        );
       } else {
         // Context line (starts with space or is empty)
         final content = line.isNotEmpty ? line.substring(1) : '';
-        diffLines.add(DiffLine(
-          type: DiffLineType.context,
-          content: content,
-          oldLineNumber: oldLine,
-          newLineNumber: newLine,
-        ));
+        diffLines.add(
+          DiffLine(
+            type: DiffLineType.context,
+            content: content,
+            oldLineNumber: oldLine,
+            newLineNumber: newLine,
+          ),
+        );
         oldLine++;
         newLine++;
       }

@@ -13,7 +13,9 @@ class StashController extends Controller {
   List<GitStash> get stashes => state.git.stashes;
 
   GitStash? get selectedStash {
-    if (stashes.isEmpty || selectedIndex < 0 || selectedIndex >= stashes.length) {
+    if (stashes.isEmpty ||
+        selectedIndex < 0 ||
+        selectedIndex >= stashes.length) {
       return null;
     }
     return stashes[selectedIndex];
