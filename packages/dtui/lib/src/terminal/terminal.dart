@@ -37,9 +37,8 @@ class Terminal {
 
   /// Stream of parsed input events from stdin.
   Stream<InputEvent> get inputEvents {
-    _eventStream ??= _inputParser
-        .parse(stdin.asBroadcastStream())
-        .asBroadcastStream();
+    _eventStream ??=
+        _inputParser.parse(stdin.asBroadcastStream()).asBroadcastStream();
     return _eventStream!;
   }
 

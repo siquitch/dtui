@@ -174,10 +174,7 @@ void main() async {
           }
         default:
           // Typing into the text input when right pane is focused
-          if (focusedPane == 1 &&
-              !event.ctrl &&
-              !event.alt &&
-              !showPopup) {
+          if (focusedPane == 1 && !event.ctrl && !event.alt && !showPopup) {
             String? ch;
             if (event.key == keySpace) {
               ch = ' ';
@@ -232,8 +229,7 @@ class _DetailColumn extends Widget {
       final barWidth = (area.width - 2).clamp(0, 30);
       final filled = ((selectedIndex + 1) / total * barWidth).round();
       final bar = '\u2588' * filled + '\u2591' * (barWidth - filled);
-      _drawLine(
-          canvas, area.left, y, bar, const Style(foreground: Color.cyan));
+      _drawLine(canvas, area.left, y, bar, const Style(foreground: Color.cyan));
       y += 1;
       _drawLine(canvas, area.left, y, '${selectedIndex + 1} / $total',
           const Style(dim: true));
@@ -291,12 +287,10 @@ class _PopupOverlay extends Widget {
             style: Style(bold: true, foreground: Color.yellow)),
         const TextSpan('It renders centered over\n'),
         const TextSpan('the rest of the UI.\n\n'),
-        const TextSpan('Press ',
-            style: Style(dim: true)),
+        const TextSpan('Press ', style: Style(dim: true)),
         const TextSpan('Escape',
             style: Style(bold: true, foreground: Color.cyan)),
-        const TextSpan(' to close.',
-            style: Style(dim: true)),
+        const TextSpan(' to close.', style: Style(dim: true)),
       ]);
 
       final popup = Popup(

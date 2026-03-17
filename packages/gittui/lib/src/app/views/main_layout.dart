@@ -48,9 +48,6 @@ class MainLayout extends Widget {
 
     // Divider
     final dividerX = area.x + sidebarWidth;
-    for (var y = area.y; y < area.y + mainHeight; y++) {
-      canvas.drawChar(dividerX, y, '\u2502', const Style(dim: true));
-    }
 
     // Right panel
     if (mainWidth > 0) {
@@ -77,7 +74,10 @@ class MainLayout extends Widget {
 
     // Status bar
     if (area.height > 1) {
-      _renderStatusBar(canvas, Rect(area.x, area.y + mainHeight, area.width, 1));
+      _renderStatusBar(
+        canvas,
+        Rect(area.x, area.y + mainHeight, area.width, 1),
+      );
     }
   }
 
@@ -100,9 +100,8 @@ class MainLayout extends Widget {
     }
 
     // Right: error/status message or help hint
-    final rightText = appState.ui.errorMessage ??
-        appState.ui.statusMessage ??
-        '? for help';
+    final rightText =
+        appState.ui.errorMessage ?? appState.ui.statusMessage ?? '? for help';
     final rightStart = area.right - rightText.length - 1;
     if (rightStart > area.x + statusText.length) {
       for (var i = 0; i < rightText.length; i++) {

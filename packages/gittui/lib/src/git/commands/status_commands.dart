@@ -35,11 +35,13 @@ class StatusCommands {
         if (parts.length >= 9) {
           final xy = parts[1];
           final path = parts.sublist(8).join(' ');
-          files.add(GitFile(
-            path: path,
-            indexStatus: GitFile.parseStatusChar(xy[0]),
-            worktreeStatus: GitFile.parseStatusChar(xy[1]),
-          ));
+          files.add(
+            GitFile(
+              path: path,
+              indexStatus: GitFile.parseStatusChar(xy[0]),
+              worktreeStatus: GitFile.parseStatusChar(xy[1]),
+            ),
+          );
         }
       } else if (entry.startsWith('2 ')) {
         // Renamed/copied entry: 2 XY sub mH mI mW hH hI Xscore path\torigPath
@@ -53,32 +55,38 @@ class StatusCommands {
             oldPath = entries[i + 1];
             i++; // skip the old path entry
           }
-          files.add(GitFile(
-            path: path,
-            oldPath: oldPath,
-            indexStatus: GitFile.parseStatusChar(xy[0]),
-            worktreeStatus: GitFile.parseStatusChar(xy[1]),
-          ));
+          files.add(
+            GitFile(
+              path: path,
+              oldPath: oldPath,
+              indexStatus: GitFile.parseStatusChar(xy[0]),
+              worktreeStatus: GitFile.parseStatusChar(xy[1]),
+            ),
+          );
         }
       } else if (entry.startsWith('u ')) {
         // Unmerged entry: u XY sub m1 m2 m3 mW h1 h2 h3 path
         final parts = entry.split(' ');
         if (parts.length >= 11) {
           final path = parts.sublist(10).join(' ');
-          files.add(GitFile(
-            path: path,
-            indexStatus: FileStatus.unmerged,
-            worktreeStatus: FileStatus.unmerged,
-          ));
+          files.add(
+            GitFile(
+              path: path,
+              indexStatus: FileStatus.unmerged,
+              worktreeStatus: FileStatus.unmerged,
+            ),
+          );
         }
       } else if (entry.startsWith('? ')) {
         // Untracked: ? path
         final path = entry.substring(2);
-        files.add(GitFile(
-          path: path,
-          indexStatus: FileStatus.untracked,
-          worktreeStatus: FileStatus.untracked,
-        ));
+        files.add(
+          GitFile(
+            path: path,
+            indexStatus: FileStatus.untracked,
+            worktreeStatus: FileStatus.untracked,
+          ),
+        );
       }
 
       i++;
@@ -118,7 +126,9 @@ class StatusCommands {
 
   /// Check if a merge is in progress.
   Future<bool> isMerging() async {
-    final mergeHead = File(p.join(_runner.workingDirectory, '.git', 'MERGE_HEAD'));
+    final mergeHead = File(
+      p.join(_runner.workingDirectory, '.git', 'MERGE_HEAD'),
+    );
     return mergeHead.exists();
   }
 

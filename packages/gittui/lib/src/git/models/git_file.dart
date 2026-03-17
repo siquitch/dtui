@@ -56,8 +56,7 @@ class GitFile {
       worktreeStatus != FileStatus.untracked || !isTracked;
 
   /// Whether there are staged changes in the index.
-  bool get hasStagedChanges =>
-      indexStatus != FileStatus.untracked;
+  bool get hasStagedChanges => indexStatus != FileStatus.untracked;
 
   /// Short two-character status display, matching `git status --short` format.
   String get statusDisplay {

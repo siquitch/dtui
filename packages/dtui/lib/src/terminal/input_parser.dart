@@ -46,7 +46,8 @@ class KeyEvent extends InputEvent {
   final bool alt;
   final bool shift;
 
-  const KeyEvent(this.key, {this.ctrl = false, this.alt = false, this.shift = false});
+  const KeyEvent(this.key,
+      {this.ctrl = false, this.alt = false, this.shift = false});
 
   @override
   String toString() =>
@@ -211,8 +212,7 @@ class InputParser {
 
     // Collect parameter bytes (digits and semicolons)
     final params = StringBuffer();
-    while (i < bytes.length &&
-        ((bytes[i] >= 0x30 && bytes[i] <= 0x3B))) {
+    while (i < bytes.length && ((bytes[i] >= 0x30 && bytes[i] <= 0x3B))) {
       params.write(String.fromCharCode(bytes[i]));
       i++;
     }

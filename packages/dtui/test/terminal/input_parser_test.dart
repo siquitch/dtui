@@ -228,8 +228,7 @@ void main() {
     group('modifier combinations', () {
       test('Shift+Up (CSI 1;2A)', () async {
         // ESC [ 1 ; 2 A
-        final events =
-            await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x32, 0x41]);
+        final events = await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x32, 0x41]);
         final e = events[0] as KeyEvent;
         expect(e.key, keyUp);
         expect(e.shift, true);
@@ -238,16 +237,14 @@ void main() {
       });
 
       test('Alt+Right (CSI 1;3C)', () async {
-        final events =
-            await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x33, 0x43]);
+        final events = await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x33, 0x43]);
         final e = events[0] as KeyEvent;
         expect(e.key, keyRight);
         expect(e.alt, true);
       });
 
       test('Ctrl+Left (CSI 1;5D)', () async {
-        final events =
-            await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x35, 0x44]);
+        final events = await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x35, 0x44]);
         final e = events[0] as KeyEvent;
         expect(e.key, keyLeft);
         expect(e.ctrl, true);
@@ -255,8 +252,7 @@ void main() {
 
       test('Shift+Alt+Ctrl (modifier 8 = 1+1+2+4)', () async {
         // CSI 1;8A = Shift+Alt+Ctrl+Up
-        final events =
-            await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x38, 0x41]);
+        final events = await parseBytes([0x1B, 0x5B, 0x31, 0x3B, 0x38, 0x41]);
         final e = events[0] as KeyEvent;
         expect(e.key, keyUp);
         expect(e.shift, true);

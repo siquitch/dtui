@@ -19,7 +19,8 @@ class CustomCommand {
 
 class CustomCommandLoader {
   static Future<List<CustomCommand>> load() async {
-    final home = Platform.environment['HOME'] ??
+    final home =
+        Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         '.';
     final path = p.join(home, '.config', 'gittui', 'custom_commands.yaml');
@@ -32,15 +33,18 @@ class CustomCommandLoader {
       final yaml = loadYaml(content);
       if (yaml is! YamlList) return [];
 
-      return yaml.map((item) {
-        if (item is! Map) return null;
-        return CustomCommand(
-          name: item['name']?.toString() ?? '',
-          command: item['command']?.toString() ?? '',
-          description: item['description']?.toString(),
-          key: item['key']?.toString(),
-        );
-      }).whereType<CustomCommand>().toList();
+      return yaml
+          .map((item) {
+            if (item is! Map) return null;
+            return CustomCommand(
+              name: item['name']?.toString() ?? '',
+              command: item['command']?.toString() ?? '',
+              description: item['description']?.toString(),
+              key: item['key']?.toString(),
+            );
+          })
+          .whereType<CustomCommand>()
+          .toList();
     } on Exception {
       return [];
     }

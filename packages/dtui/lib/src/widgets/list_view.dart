@@ -29,7 +29,8 @@ class ListView extends Widget {
     int selectedIndex = 0,
     this.onSelect,
     this.selectedStyle = const Style(inverse: true),
-  })  : _selectedIndex = items.isEmpty ? -1 : selectedIndex.clamp(0, items.length - 1),
+  })  : _selectedIndex =
+            items.isEmpty ? -1 : selectedIndex.clamp(0, items.length - 1),
         _scrollOffset = 0;
 
   int get selectedIndex => _selectedIndex;

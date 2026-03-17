@@ -35,18 +35,21 @@ class StashCommands {
       // Parse branch name from stash subject like "WIP on main: ..." or
       // "On main: ..."
       var branchName = '';
-      final branchMatch =
-          RegExp(r'(?:WIP on|On) ([^:]+):').firstMatch(stashSubject);
+      final branchMatch = RegExp(
+        r'(?:WIP on|On) ([^:]+):',
+      ).firstMatch(stashSubject);
       if (branchMatch != null) {
         branchName = branchMatch.group(1)!;
       }
 
-      stashes.add(GitStash(
-        index: index,
-        message: message,
-        hash: hash,
-        branchName: branchName,
-      ));
+      stashes.add(
+        GitStash(
+          index: index,
+          message: message,
+          hash: hash,
+          branchName: branchName,
+        ),
+      );
     }
 
     return stashes;

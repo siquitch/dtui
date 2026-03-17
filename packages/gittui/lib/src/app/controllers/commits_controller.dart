@@ -13,7 +13,9 @@ class CommitsController extends Controller {
   List<GitCommit> get commits => state.git.commits;
 
   GitCommit? get selectedCommit {
-    if (commits.isEmpty || selectedIndex < 0 || selectedIndex >= commits.length) {
+    if (commits.isEmpty ||
+        selectedIndex < 0 ||
+        selectedIndex >= commits.length) {
       return null;
     }
     return commits[selectedIndex];

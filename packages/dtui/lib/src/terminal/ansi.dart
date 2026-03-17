@@ -60,12 +60,10 @@ class Ansi {
   static String disableAlternateScreen() => '$_csi?1049l';
 
   /// Enable SGR mouse tracking (button events + SGR encoding).
-  static String enableMouseTracking() =>
-      '$_csi?1000h$_csi?1002h$_csi?1006h';
+  static String enableMouseTracking() => '$_csi?1000h$_csi?1002h$_csi?1006h';
 
   /// Disable SGR mouse tracking.
-  static String disableMouseTracking() =>
-      '$_csi?1006l$_csi?1002l$_csi?1000l';
+  static String disableMouseTracking() => '$_csi?1006l$_csi?1002l$_csi?1000l';
 
   /// Set the terminal window title.
   static String setTitle(String title) => '$_esc]0;$title$_esc\\';

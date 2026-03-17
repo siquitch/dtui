@@ -5,5 +5,6 @@ environment:
   sdk: ^3.12.0-113.2.beta
 
 workspace:
-  - packages/gittui
-  - packages/dtui
+  - packages/*
+dependencies:
+  collection: ^1.19.1

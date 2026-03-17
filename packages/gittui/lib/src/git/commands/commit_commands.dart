@@ -45,7 +45,8 @@ class CommitCommands {
     if (headHash != targetHash) {
       throw GitCommandException(
         exitCode: 1,
-        stderr: 'rewordCommit only supports HEAD. '
+        stderr:
+            'rewordCommit only supports HEAD. '
             'Use interactive rebase for older commits.',
         command: 'rewordCommit',
       );

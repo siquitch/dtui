@@ -34,7 +34,8 @@ class CommandLogView extends Widget {
           : const Style(foreground: Color.red);
 
       final durationMs = entry.duration.inMilliseconds;
-      final text = '${entry.success ? "✓" : "✗"} ${entry.command} (${durationMs}ms)';
+      final text =
+          '${entry.success ? "✓" : "✗"} ${entry.command} (${durationMs}ms)';
 
       for (var j = 0; j < text.length && j < area.width; j++) {
         canvas.drawChar(area.x + j, area.y + i, text[j], style);

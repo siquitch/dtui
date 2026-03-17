@@ -53,7 +53,9 @@ class GitState {
       repoRoot: repoRoot ?? this.repoRoot,
       isMerging: isMerging ?? this.isMerging,
       isRebasing: isRebasing ?? this.isRebasing,
-      selectedDiff: clearSelectedDiff ? null : (selectedDiff ?? this.selectedDiff),
+      selectedDiff: clearSelectedDiff
+          ? null
+          : (selectedDiff ?? this.selectedDiff),
     );
   }
 }

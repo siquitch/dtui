@@ -12,11 +12,13 @@ class StatusController extends Controller {
       final branch = await repo.status.getCurrentBranch();
       final isMerging = await repo.status.isMerging();
       final isRebasing = await repo.status.isRebasing();
-      updateGitState((g) => g.copyWith(
-            currentBranch: branch,
-            isMerging: isMerging,
-            isRebasing: isRebasing,
-          ));
+      updateGitState(
+        (g) => g.copyWith(
+          currentBranch: branch,
+          isMerging: isMerging,
+          isRebasing: isRebasing,
+        ),
+      );
     } on Exception {
       // Handle gracefully
     }

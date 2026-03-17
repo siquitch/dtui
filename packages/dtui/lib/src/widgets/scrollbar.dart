@@ -45,10 +45,10 @@ class Scrollbar extends Widget {
     final thumbHeight =
         (trackHeight * visibleItems / totalItems).ceil().clamp(1, trackHeight);
     final maxOffset = totalItems - visibleItems;
-    final scrollRatio =
-        maxOffset > 0 ? scrollOffset / maxOffset : 0.0;
-    final thumbTop =
-        (scrollRatio * (trackHeight - thumbHeight)).round().clamp(0, trackHeight - thumbHeight);
+    final scrollRatio = maxOffset > 0 ? scrollOffset / maxOffset : 0.0;
+    final thumbTop = (scrollRatio * (trackHeight - thumbHeight))
+        .round()
+        .clamp(0, trackHeight - thumbHeight);
 
     for (var i = 0; i < trackHeight; i++) {
       final isThumb = i >= thumbTop && i < thumbTop + thumbHeight;

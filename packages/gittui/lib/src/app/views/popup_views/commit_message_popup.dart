@@ -12,10 +12,10 @@ class CommitMessagePopup extends Widget {
     this.amend = false,
     String initialText = '',
   }) : _textInput = TextInput(
-          text: initialText,
-          prompt: '> ',
-          onSubmit: null,
-        ) {
+         text: initialText,
+         prompt: '> ',
+         onSubmit: null,
+       ) {
     _textInput.onSubmit = (text) {
       if (text.trim().isNotEmpty) {
         onCommit?.call(text.trim());

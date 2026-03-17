@@ -70,8 +70,7 @@ void main() {
 
       test('boundary values (0,0,0) and (255,255,255)', () {
         expect(Color.rgb(0, 0, 0).toForegroundCode(), '38;2;0;0;0');
-        expect(
-            Color.rgb(255, 255, 255).toForegroundCode(), '38;2;255;255;255');
+        expect(Color.rgb(255, 255, 255).toForegroundCode(), '38;2;255;255;255');
       });
     });
 

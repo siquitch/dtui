@@ -61,19 +61,17 @@ class Popup extends Widget {
 
     // Draw border
     canvas.drawChar(popRect.left, popRect.top, _topLeft, borderStyle);
-    canvas.drawChar(
-        popRect.right - 1, popRect.top, _topRight, borderStyle);
-    canvas.drawChar(
-        popRect.left, popRect.bottom - 1, _bottomLeft, borderStyle);
+    canvas.drawChar(popRect.right - 1, popRect.top, _topRight, borderStyle);
+    canvas.drawChar(popRect.left, popRect.bottom - 1, _bottomLeft, borderStyle);
     canvas.drawChar(
         popRect.right - 1, popRect.bottom - 1, _bottomRight, borderStyle);
 
-    canvas.drawHorizontalLine(popRect.left + 1, popRect.top,
-        popRect.width - 2, _horizontal, borderStyle);
+    canvas.drawHorizontalLine(popRect.left + 1, popRect.top, popRect.width - 2,
+        _horizontal, borderStyle);
     canvas.drawHorizontalLine(popRect.left + 1, popRect.bottom - 1,
         popRect.width - 2, _horizontal, borderStyle);
-    canvas.drawVerticalLine(popRect.left, popRect.top + 1,
-        popRect.height - 2, _vertical, borderStyle);
+    canvas.drawVerticalLine(popRect.left, popRect.top + 1, popRect.height - 2,
+        _vertical, borderStyle);
     canvas.drawVerticalLine(popRect.right - 1, popRect.top + 1,
         popRect.height - 2, _vertical, borderStyle);
 
@@ -81,8 +79,9 @@ class Popup extends Widget {
     if (title.isNotEmpty) {
       final maxTitleLen = popRect.width - 4;
       if (maxTitleLen > 0) {
-        final displayTitle =
-            title.length > maxTitleLen ? title.substring(0, maxTitleLen) : title;
+        final displayTitle = title.length > maxTitleLen
+            ? title.substring(0, maxTitleLen)
+            : title;
         canvas.drawText(
             popRect.left + 2, popRect.top, displayTitle, titleStyle);
       }

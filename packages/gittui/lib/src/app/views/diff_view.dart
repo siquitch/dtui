@@ -28,26 +28,34 @@ class DiffView extends Widget {
 
     // File header
     final fileName = diff!.newFile ?? diff!.oldFile ?? 'unknown';
-    lines.add(_DiffDisplayLine(
-      text: '--- ${diff!.oldFile ?? "/dev/null"}',
-      style: const Style(bold: true),
-    ));
-    lines.add(_DiffDisplayLine(
-      text: '+++ ${diff!.newFile ?? "/dev/null"}',
-      style: const Style(bold: true),
-    ));
+    lines.add(
+      _DiffDisplayLine(
+        text: '--- ${diff!.oldFile ?? "/dev/null"}',
+        style: const Style(bold: true),
+      ),
+    );
+    lines.add(
+      _DiffDisplayLine(
+        text: '+++ ${diff!.newFile ?? "/dev/null"}',
+        style: const Style(bold: true),
+      ),
+    );
 
     if (diff!.isBinary) {
-      lines.add(_DiffDisplayLine(
-        text: 'Binary file $fileName',
-        style: const Style(dim: true),
-      ));
+      lines.add(
+        _DiffDisplayLine(
+          text: 'Binary file $fileName',
+          style: const Style(dim: true),
+        ),
+      );
     } else {
       for (final hunk in diff!.hunks) {
-        lines.add(_DiffDisplayLine(
-          text: hunk.header,
-          style: const Style(foreground: Color.cyan),
-        ));
+        lines.add(
+          _DiffDisplayLine(
+            text: hunk.header,
+            style: const Style(foreground: Color.cyan),
+          ),
+        );
         for (final line in hunk.lines) {
           final style = switch (line.type) {
             DiffLineType.added => const Style(foreground: Color.green),
@@ -61,10 +69,12 @@ class DiffView extends Widget {
             DiffLineType.removed => '-',
             _ => ' ',
           };
-          lines.add(_DiffDisplayLine(
-            text: '$prefix${line.content}',
-            style: style,
-          ));
+          lines.add(
+            _DiffDisplayLine(
+              text: '$prefix${line.content}',
+              style: style,
+            ),
+          );
         }
       }
     }
@@ -90,8 +100,12 @@ class DiffView extends Widget {
 
       // Clear line
       for (var x = area.x; x < area.right; x++) {
-        canvas.drawChar(x, area.y + i, ' ',
-            lineIndex == selectedLine ? style : Style.none);
+        canvas.drawChar(
+          x,
+          area.y + i,
+          ' ',
+          lineIndex == selectedLine ? style : Style.none,
+        );
       }
 
       // Draw text, truncated
