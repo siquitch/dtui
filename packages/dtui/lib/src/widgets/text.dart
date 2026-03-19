@@ -12,6 +12,31 @@ class TextSpan {
   const TextSpan(this.text, {this.style = Style.none});
 }
 
+/// Renders wrapped text character-by-character onto a canvas.
+///
+/// Returns the final (x, y) position after rendering.
+(int, int) _renderWrappedText(
+    Canvas canvas, Rect area, String text, Style style, int x, int y) {
+  for (var i = 0; i < text.length; i++) {
+    if (text[i] == '\n') {
+      y++;
+      x = area.left;
+      if (y >= area.bottom) return (x, y);
+      continue;
+    }
+
+    if (x >= area.right) {
+      y++;
+      x = area.left;
+      if (y >= area.bottom) return (x, y);
+    }
+
+    canvas.drawChar(x, y, text[i], style);
+    x++;
+  }
+  return (x, y);
+}
+
 /// A simple text widget that renders a single string.
 class Text extends Widget {
   final String text;
@@ -22,29 +47,7 @@ class Text extends Widget {
   @override
   void render(Canvas canvas, Rect area) {
     if (area.width <= 0 || area.height <= 0) return;
-
-    // Render text, wrapping at area boundaries
-    var x = area.left;
-    var y = area.top;
-
-    for (var i = 0; i < text.length; i++) {
-      if (text[i] == '\n') {
-        y++;
-        x = area.left;
-        if (y >= area.bottom) break;
-        continue;
-      }
-
-      if (x >= area.right) {
-        // Move to next line on overflow
-        y++;
-        x = area.left;
-        if (y >= area.bottom) break;
-      }
-
-      canvas.drawChar(x, y, text[i], style);
-      x++;
-    }
+    _renderWrappedText(canvas, area, text, style, area.left, area.top);
   }
 
   @override
@@ -73,23 +76,8 @@ class RichText extends Widget {
     var y = area.top;
 
     for (final span in spans) {
-      for (var i = 0; i < span.text.length; i++) {
-        if (span.text[i] == '\n') {
-          y++;
-          x = area.left;
-          if (y >= area.bottom) return;
-          continue;
-        }
-
-        if (x >= area.right) {
-          y++;
-          x = area.left;
-          if (y >= area.bottom) return;
-        }
-
-        canvas.drawChar(x, y, span.text[i], span.style);
-        x++;
-      }
+      (x, y) = _renderWrappedText(canvas, area, span.text, span.style, x, y);
+      if (y >= area.bottom) return;
     }
   }
 

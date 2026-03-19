@@ -17,6 +17,7 @@ class DTuiApp {
   final DiffRenderer _renderer = DiffRenderer();
 
   Buffer? _previousBuffer;
+  Buffer? _currentBuffer;
   bool _needsRender = true;
   bool _running = false;
   Completer<void>? _exitCompleter;
@@ -99,18 +100,24 @@ class DTuiApp {
     final (width, height) = terminal.size;
     if (width <= 0 || height <= 0) return;
 
-    final buffer = Buffer(width, height);
-    final canvas = Canvas(buffer, Rect(0, 0, width, height));
+    // Reuse or allocate buffer, swapping with previous
+    final buffer = (_previousBuffer != null &&
+            _previousBuffer!.width == width &&
+            _previousBuffer!.height == height)
+        ? (_previousBuffer!..clear())
+        : Buffer(width, height);
+
     final area = Rect(0, 0, width, height);
+    final canvas = Canvas(buffer, area);
 
     final root = buildRoot();
     root.render(canvas, area);
 
     String output;
-    if (fullRender || _previousBuffer == null) {
+    if (fullRender || _currentBuffer == null) {
       output = _renderer.renderFull(buffer);
     } else {
-      output = _renderer.render(_previousBuffer!, buffer);
+      output = _renderer.render(_currentBuffer!, buffer);
     }
 
     if (output.isNotEmpty) {
@@ -118,6 +125,8 @@ class DTuiApp {
       await terminal.flush();
     }
 
-    _previousBuffer = buffer;
+    // Swap buffers: current becomes previous (available for reuse next frame)
+    _previousBuffer = _currentBuffer;
+    _currentBuffer = buffer;
   }
 }

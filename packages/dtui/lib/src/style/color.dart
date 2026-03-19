@@ -80,36 +80,31 @@ class Color {
   }
 
   /// Returns the ANSI escape sequence for using this color as foreground.
-  String toForegroundCode() {
-    switch (_type) {
-      case _ColorType.reset:
-        return '39';
-      case _ColorType.ansi16:
-        if (_index < 8) {
-          return '${30 + _index}';
-        }
-        return '${90 + _index - 8}';
-      case _ColorType.ansi256:
-        return '38;5;$_index';
-      case _ColorType.rgb:
-        return '38;2;$_r;$_g;$_b';
-    }
-  }
+  String toForegroundCode() =>
+      _toAnsiCode(fgBase: 30, fgBright: 90, fg256: 38, fgReset: 39);
 
   /// Returns the ANSI escape sequence for using this color as background.
-  String toBackgroundCode() {
+  String toBackgroundCode() =>
+      _toAnsiCode(fgBase: 40, fgBright: 100, fg256: 48, fgReset: 49);
+
+  String _toAnsiCode({
+    required int fgBase,
+    required int fgBright,
+    required int fg256,
+    required int fgReset,
+  }) {
     switch (_type) {
       case _ColorType.reset:
-        return '49';
+        return '$fgReset';
       case _ColorType.ansi16:
         if (_index < 8) {
-          return '${40 + _index}';
+          return '${fgBase + _index}';
         }
-        return '${100 + _index - 8}';
+        return '${fgBright + _index - 8}';
       case _ColorType.ansi256:
-        return '48;5;$_index';
+        return '$fg256;5;$_index';
       case _ColorType.rgb:
-        return '48;2;$_r;$_g;$_b';
+        return '$fg256;2;$_r;$_g;$_b';
     }
   }
 
