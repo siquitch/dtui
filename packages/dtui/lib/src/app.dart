@@ -23,6 +23,7 @@ class DTuiApp {
   Completer<void>? _exitCompleter;
   StreamSubscription<InputEvent>? _inputSub;
   StreamSubscription<ProcessSignal>? _sigwinchSub;
+  StreamSubscription<ProcessSignal>? _sigintSub;
 
   DTuiApp({required this.buildRoot, this.onEvent, Terminal? terminal})
       : terminal = terminal ?? Terminal();
@@ -84,12 +85,22 @@ class DTuiApp {
         // SIGWINCH not available on all platforms
       }
 
+      // Handle SIGINT (Ctrl+C from OS) for graceful shutdown
+      try {
+        _sigintSub = ProcessSignal.sigint.watch().listen((_) {
+          exit();
+        }, onError: (_) {});
+      } catch (_) {
+        // SIGINT watching not available on all platforms
+      }
+
       // Wait until exit is called
       await _exitCompleter!.future;
     } finally {
       await _inputSub?.cancel();
       await _sigwinchSub?.cancel();
-      terminal.dispose();
+      await _sigintSub?.cancel();
+      await terminal.dispose();
     }
   }
 

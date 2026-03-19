@@ -39,6 +39,7 @@ void main(List<String> arguments) async {
   final app = GittuiApp();
   try {
     await app.run(path);
+    exit(0);
   } on Exception catch (e) {
     // Ensure terminal is restored even on error
     try {
