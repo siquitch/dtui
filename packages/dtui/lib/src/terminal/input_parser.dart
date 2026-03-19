@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 // Named key constants
 const String keyUp = 'Up';
@@ -188,8 +189,8 @@ class InputParser {
         }
         if (start + charLen <= bytes.length) {
           final codeUnits = bytes.sublist(start, start + charLen);
-          final char = String.fromCharCodes(_decodeUtf8(codeUnits));
-          controller.add(KeyEvent(char));
+          final char = _decodeUtf8(codeUnits);
+          if (char.isNotEmpty) controller.add(KeyEvent(char));
           i += charLen;
         } else {
           i++;
@@ -435,24 +436,12 @@ class InputParser {
     return i;
   }
 
-  /// Decode a single UTF-8 byte sequence into a list of code units.
-  static List<int> _decodeUtf8(List<int> bytes) {
-    if (bytes.isEmpty) return [];
-    int codePoint;
-    if (bytes.length == 2) {
-      codePoint = ((bytes[0] & 0x1F) << 6) | (bytes[1] & 0x3F);
-    } else if (bytes.length == 3) {
-      codePoint = ((bytes[0] & 0x0F) << 12) |
-          ((bytes[1] & 0x3F) << 6) |
-          (bytes[2] & 0x3F);
-    } else if (bytes.length == 4) {
-      codePoint = ((bytes[0] & 0x07) << 18) |
-          ((bytes[1] & 0x3F) << 12) |
-          ((bytes[2] & 0x3F) << 6) |
-          (bytes[3] & 0x3F);
-    } else {
-      return [];
+  /// Decode a single UTF-8 byte sequence into a string.
+  static String _decodeUtf8(List<int> bytes) {
+    try {
+      return utf8.decode(bytes);
+    } catch (_) {
+      return '';
     }
-    return String.fromCharCode(codePoint).codeUnits;
   }
 }

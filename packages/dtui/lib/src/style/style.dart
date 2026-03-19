@@ -62,9 +62,9 @@ class Style {
     return '\x1B[0m';
   }
 
-  /// Merge another style on top of this one. Non-null fields in [other]
-  /// override fields in this style. Boolean fields from [other] override
-  /// if they are true.
+  /// Combine another style on top of this one. Non-null fields in [other]
+  /// override fields in this style. Boolean attributes are OR'd together
+  /// (once enabled, they stay enabled). Use [copyWith] to replace attributes.
   Style merge(Style other) {
     return Style(
       foreground: other.foreground ?? foreground,

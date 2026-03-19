@@ -36,10 +36,23 @@ class SplitPane extends Widget {
 
   @override
   (int, int) measure(BoxConstraints constraints) {
-    return constraints.constrain(
-      constraints.hasBoundedWidth ? constraints.maxWidth : 0,
-      constraints.hasBoundedHeight ? constraints.maxHeight : 0,
-    );
+    if (_children.isEmpty) return constraints.constrain(0, 0);
+
+    var totalWidth = 0;
+    var totalHeight = 0;
+
+    for (final child in _children) {
+      final (w, h) = child.measure(constraints);
+      if (direction == SplitDirection.horizontal) {
+        totalWidth += w;
+        if (h > totalHeight) totalHeight = h;
+      } else {
+        totalHeight += h;
+        if (w > totalWidth) totalWidth = w;
+      }
+    }
+
+    return constraints.constrain(totalWidth, totalHeight);
   }
 
   @override

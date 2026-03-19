@@ -1,4 +1,3 @@
-import '../style/color.dart';
 import '../style/style.dart';
 import '../terminal/ansi.dart';
 import 'buffer.dart';
@@ -82,49 +81,21 @@ class DiffRenderer {
 
   /// Build a minimal ANSI transition from one style to another.
   String _buildStyleTransition(Style? from, Style to) {
-    // If target is plain, just reset
+    // No transition needed if styles match
+    if (from == to) return '';
+
+    // Target is plain — just reset (if we had styling active)
     if (to == Style.none) {
       if (from == null || from == Style.none) return '';
       return Ansi.resetStyle();
     }
 
-    // If coming from null or a complex style, just reset and apply new
-    if (from == null || from == Style.none || _needsFullReset(from, to)) {
-      final prefix = to.toAnsiPrefix();
-      if (prefix.isEmpty) return '';
-      if (from != null && from != Style.none) {
-        return '${Ansi.resetStyle()}$prefix';
-      }
-      return prefix;
+    // Coming from nothing — just apply new style
+    if (from == null || from == Style.none) {
+      return to.toAnsiPrefix();
     }
 
-    // Styles are the same, no transition needed
-    if (from == to) return '';
-
-    // Otherwise do a full reset and reapply
+    // Reset and reapply (ANSI lacks individual attribute "off" codes)
     return '${Ansi.resetStyle()}${to.toAnsiPrefix()}';
-  }
-
-  /// Check if we need a full reset when transitioning from one style to another.
-  bool _needsFullReset(Style from, Style to) {
-    // If any attribute was on in 'from' but off in 'to', we need a reset
-    // because ANSI doesn't have individual "off" codes for all attributes.
-    if (from.bold && !to.bold) return true;
-    if (from.dim && !to.dim) return true;
-    if (from.italic && !to.italic) return true;
-    if (from.underline && !to.underline) return true;
-    if (from.strikethrough && !to.strikethrough) return true;
-    if (from.inverse && !to.inverse) return true;
-    if (from.foreground != null &&
-        from.foreground != Color.reset &&
-        to.foreground == null) {
-      return true;
-    }
-    if (from.background != null &&
-        from.background != Color.reset &&
-        to.background == null) {
-      return true;
-    }
-    return false;
   }
 }

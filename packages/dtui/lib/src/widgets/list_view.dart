@@ -24,11 +24,15 @@ class ListView extends Widget {
   /// Style for the selected item highlight.
   final Style selectedStyle;
 
+  /// Number of items to jump on PageUp/PageDown.
+  final int pageSize;
+
   ListView({
     required this.items,
     int selectedIndex = 0,
     this.onSelect,
     this.selectedStyle = const Style(inverse: true),
+    this.pageSize = 10,
   })  : _selectedIndex =
             items.isEmpty ? -1 : selectedIndex.clamp(0, items.length - 1),
         _scrollOffset = 0;
@@ -161,11 +165,11 @@ class ListView extends Widget {
         onSelect?.call(_selectedIndex);
         return true;
       case keyPageDown:
-        pageDown(10);
+        pageDown(pageSize);
         onSelect?.call(_selectedIndex);
         return true;
       case keyPageUp:
-        pageUp(10);
+        pageUp(pageSize);
         onSelect?.call(_selectedIndex);
         return true;
       case keyHome:

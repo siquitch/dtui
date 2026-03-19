@@ -12,40 +12,30 @@ class Popup extends Widget {
   final Widget child;
   final int width;
   final int height;
+  final BoxChars chars;
   final Style borderStyle;
   final Style titleStyle;
   final void Function()? onClose;
-  bool _visible;
-
-  /// Box drawing characters for the popup border.
-  static const _topLeft = '\u256D';
-  static const _topRight = '\u256E';
-  static const _bottomLeft = '\u2570';
-  static const _bottomRight = '\u256F';
-  static const _horizontal = '\u2500';
-  static const _vertical = '\u2502';
+  bool visible;
 
   Popup({
     required this.title,
     required this.child,
     this.width = 60,
     this.height = 20,
+    this.chars = const BoxChars.rounded(),
     this.borderStyle = Style.none,
     this.titleStyle = const Style(bold: true),
     this.onClose,
-    bool visible = true,
-  }) : _visible = visible;
-
-  // ignore: unnecessary_getters_setters
-  bool get visible => _visible;
-  set visible(bool value) => _visible = value;
+    this.visible = true,
+  });
 
   @override
   List<Widget> get children => [child];
 
   @override
   void render(Canvas canvas, Rect area) {
-    if (!_visible) return;
+    if (!visible) return;
     if (area.width <= 0 || area.height <= 0) return;
 
     // Calculate centered position
@@ -56,24 +46,10 @@ class Popup extends Widget {
     final popRect = Rect(px, py, popWidth, popHeight);
 
     // Clear popup area
-    final clearCell = Cell(' ', Style.none);
-    canvas.fillRect(popRect, clearCell);
+    canvas.fillRect(popRect, Cell(' ', Style.none));
 
     // Draw border
-    canvas.drawChar(popRect.left, popRect.top, _topLeft, borderStyle);
-    canvas.drawChar(popRect.right - 1, popRect.top, _topRight, borderStyle);
-    canvas.drawChar(popRect.left, popRect.bottom - 1, _bottomLeft, borderStyle);
-    canvas.drawChar(
-        popRect.right - 1, popRect.bottom - 1, _bottomRight, borderStyle);
-
-    canvas.drawHorizontalLine(popRect.left + 1, popRect.top, popRect.width - 2,
-        _horizontal, borderStyle);
-    canvas.drawHorizontalLine(popRect.left + 1, popRect.bottom - 1,
-        popRect.width - 2, _horizontal, borderStyle);
-    canvas.drawVerticalLine(popRect.left, popRect.top + 1, popRect.height - 2,
-        _vertical, borderStyle);
-    canvas.drawVerticalLine(popRect.right - 1, popRect.top + 1,
-        popRect.height - 2, _vertical, borderStyle);
+    canvas.drawBox(popRect, chars, borderStyle);
 
     // Draw title
     if (title.isNotEmpty) {
@@ -97,15 +73,24 @@ class Popup extends Widget {
 
   @override
   (int, int) measure(BoxConstraints constraints) {
-    return constraints.constrain(width, height);
+    final (childW, childH) = child.measure(BoxConstraints(
+      minWidth: (constraints.minWidth - 2).clamp(0, constraints.maxWidth),
+      maxWidth: (constraints.maxWidth - 2).clamp(0, constraints.maxWidth),
+      minHeight: (constraints.minHeight - 2).clamp(0, constraints.maxHeight),
+      maxHeight: (constraints.maxHeight - 2).clamp(0, constraints.maxHeight),
+    ));
+    return constraints.constrain(
+      (childW + 2).clamp(width, constraints.maxWidth),
+      (childH + 2).clamp(height, constraints.maxHeight),
+    );
   }
 
   @override
   bool handleEvent(InputEvent event) {
-    if (!_visible) return false;
+    if (!visible) return false;
 
     if (event is KeyEvent && event.key == keyEscape) {
-      _visible = false;
+      visible = false;
       onClose?.call();
       return true;
     }
